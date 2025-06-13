@@ -1,0 +1,27 @@
+mode: set
+payment-gateway/cmd/infra/handler/create_payment.go:19.69,23.2 1 1
+payment-gateway/cmd/infra/handler/create_payment.go:25.58,32.53 2 1
+payment-gateway/cmd/infra/handler/create_payment.go:32.53,35.3 2 1
+payment-gateway/cmd/infra/handler/create_payment.go:37.2,38.16 2 1
+payment-gateway/cmd/infra/handler/create_payment.go:38.16,41.26 2 1
+payment-gateway/cmd/infra/handler/create_payment.go:41.26,44.4 2 0
+payment-gateway/cmd/infra/handler/create_payment.go:46.3,47.9 2 1
+payment-gateway/cmd/infra/handler/create_payment.go:50.2,55.4 1 1
+payment-gateway/cmd/infra/handler/get_cashout.go:21.73,25.2 1 0
+payment-gateway/cmd/infra/handler/get_cashout.go:27.55,31.16 3 0
+payment-gateway/cmd/infra/handler/get_cashout.go:31.16,34.3 2 0
+payment-gateway/cmd/infra/handler/get_cashout.go:35.2,36.16 2 0
+payment-gateway/cmd/infra/handler/get_cashout.go:36.16,39.26 2 0
+payment-gateway/cmd/infra/handler/get_cashout.go:39.26,42.4 2 0
+payment-gateway/cmd/infra/handler/get_cashout.go:43.3,44.9 2 0
+payment-gateway/cmd/infra/handler/get_cashout.go:47.2,52.4 1 0
+payment-gateway/cmd/infra/handler/process_payment.go:19.85,23.2 1 1
+payment-gateway/cmd/infra/handler/process_payment.go:25.59,27.16 2 1
+payment-gateway/cmd/infra/handler/process_payment.go:27.16,30.3 2 1
+payment-gateway/cmd/infra/handler/process_payment.go:32.2,37.53 2 1
+payment-gateway/cmd/infra/handler/process_payment.go:37.53,40.3 2 1
+payment-gateway/cmd/infra/handler/process_payment.go:42.2,43.16 2 1
+payment-gateway/cmd/infra/handler/process_payment.go:43.16,46.26 2 1
+payment-gateway/cmd/infra/handler/process_payment.go:46.26,49.4 2 0
+payment-gateway/cmd/infra/handler/process_payment.go:51.3,52.9 2 1
+payment-gateway/cmd/infra/handler/process_payment.go:55.2,60.4 1 1

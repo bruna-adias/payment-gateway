@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: payment_gateway
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  setup:
+    container_name: setup
+    image: mysql:8.0
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: [ "sh", "-c", "sleep 20 && mysql -h db -u myuser -pmypassword payment_gateway < /scripts/setup.sql" ]
+    volumes:
+      - ./scripts:/scripts:ro
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 128M
