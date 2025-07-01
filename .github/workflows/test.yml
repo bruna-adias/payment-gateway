@@ -30,9 +30,6 @@ jobs:
       - name: Download dependencies
         run: go mod tidy
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       - name: Wait for API to be healthy
         shell: bash
         run: |
