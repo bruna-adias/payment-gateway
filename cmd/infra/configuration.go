@@ -1,5 +1,7 @@
 package infra
 
+import "os"
+
 type Configuration struct {
 	DbUser     string
 	DbPassword string
@@ -10,10 +12,10 @@ type Configuration struct {
 
 func NewConfiguration() *Configuration {
 	return &Configuration{
-		DbUser:     "myuser",
-		DbPassword: "mypassword",
-		DbHost:     "localhost",
-		DbPort:     "3307",
-		DbName:     "payment_gateway",
+		DbUser:     os.Getenv("DB_USER"),
+		DbPassword: os.Getenv("DB_PASSWORD"),
+		DbHost:     os.Getenv("DB_HOST"),
+		DbPort:     os.Getenv("DB_PORT"),
+		DbName:     os.Getenv("DB_NAME"),
 	}
 }

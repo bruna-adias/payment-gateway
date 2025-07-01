@@ -29,6 +29,22 @@ jobs:
 
       - name: Download dependencies
         run: go mod tidy
+
+      - name: Start services
+        run: docker-compose -f docker-compose.e2e.yaml up -d --build
+
+      - name: Wait for API to be healthy
+        run: |
+          echo "Waiting for API..."
+          for i in {1..30}; do
+            if curl -s http://localhost:8080/health; then
+              echo "API is up!"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "API did not start in time."
+          exit 
         
       - name: Run tests with coverage
         run: |
@@ -40,3 +56,43 @@ jobs:
           name: coverage-${{ runner.os }}
           path: coverage.out
 
+      - name: Stop services
+        if: always()
+        run: docker-compose -f docker-compose.e2e.yaml down
+
+#  e2e-test:
+#    name: End-to-End Tests
+#    needs: test
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: Set up Go
+#        uses: actions/setup-go@v5
+#        with:
+#          go-version: '1.22'
+#
+#      - name: Start services
+#        run: docker-compose -f docker-compose.e2e.yaml up -d --build
+#
+#      - name: Wait for API to be healthy
+#        run: |
+#          echo "Waiting for API..."
+#          for i in {1..30}; do
+#            if curl -s http://localhost:8080/health; then
+#              echo "API is up!"
+#              exit 0
+#            fi
+#            sleep 1
+#          done
+#          echo "API did not start in time."
+#          exit 1
+#
+#      - name: Run E2E tests
+#        run: go test -v ./tests/e2e/...
+#
+      - name: Stop services
+        if: always()
+        run: docker-compose -f docker-compose.e2e.yaml down

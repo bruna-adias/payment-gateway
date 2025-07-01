@@ -16,10 +16,9 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    restart: unless-stopped
+
   db:
     image: mysql:8.0
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: payment_gateway
@@ -35,8 +34,3 @@ services:
       start_period: 10s
     volumes:
       - ./scripts/setup.sql:/docker-entrypoint-initdb.d/setup.sql
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
