@@ -30,17 +30,9 @@ jobs:
       - name: Download dependencies
         run: go mod tidy
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Set up Docker
+        uses: docker-practice/actions-setup-docker@v1
 
-      - name: Start Docker on macOS
-        if: runner.os == 'macOS'
-        run: |
-          open -a Docker
-          while ! docker system info > /dev/null 2>&1; do
-            echo "Waiting for Docker daemon..."
-            sleep 1
-          done
       - name: Start services
         run: docker compose -f docker-compose.e2e.yaml up -d --build
 
