@@ -2,9 +2,9 @@ name: Go Tests
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   test-other-os:
@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ ubuntu-latest, windows-latest ]
 
     steps:
       - name: Checkout code
@@ -67,7 +67,7 @@ jobs:
 
     strategy:
       matrix:
-        os: macos-latest
+        os: [ macos-latest ]
 
     steps:
       - name: Checkout code
