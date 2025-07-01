@@ -30,6 +30,9 @@ jobs:
       - name: Download dependencies
         run: go mod tidy
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Start services
         run: docker compose -f docker-compose.e2e.yaml up -d --build
 
