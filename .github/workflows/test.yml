@@ -7,28 +7,19 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  test-e2e:
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        # Executa para todos os 3 sistemas operacionais
-        os: [ ubuntu-latest, windows-latest, macos-13 ]
+#       Esta sendo executado apenas no linux pois os ambientes de windows e macos nao suportaram o docker compose para
+#       execução dos testes e2e.
+        os: [ ubuntu-latest ]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Setup Docker on macOS
-        if: runner.os == 'macOS'
-        uses: douglascamata/setup-docker-macos-action@v1.0.0
-
-      - name: Set up Docker Buildx
-        if: runner.os == 'Windows'
-        uses: docker/setup-buildx-action@v3
-        with:
-          driver: docker-container
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -73,14 +64,42 @@ jobs:
           exit 1
 
       - name: Run tests with coverage
-        run: go test -v -coverprofile='coverage.out' ./...
-
-      - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-${{ runner.os }}
-          path: coverage.out
+        run: go test -tags=e2e -v  ./...
 
       - name: Stop services
         if: always()
         run: docker compose -f docker-compose.e2e.yaml down
+
+  test:
+
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22' # You can change this to match your Go version
+
+      - name: Display Go version
+        run: go version
+
+      - name: Download dependencies
+        run: go mod tidy
+
+      - name: Run tests with coverage
+        run: |
+          go test -v -coverprofile='coverage.out' ./...
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ runner.os }}Add commentMore actions
+          path: coverage.out
