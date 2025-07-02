@@ -21,6 +21,12 @@ Para que o Microserviço não fosse tão grande, a parte de criação de um pedi
 - **Framework Web**: Gin
   - Framework HTTP web rápido e produtivo para Go
   - Roteamento eficiente e middleware flexível
+   
+- **Banco de Dados**: MySQL
+  - Base de dados relacional
+   
+- **Conteinerização**: Docker
+  - Utilização de Docker-compose para gerenciamento de ambientes
 
 - **Testes**: Testes unitários nativos do Go
   - Suporte a testes concorrentes
