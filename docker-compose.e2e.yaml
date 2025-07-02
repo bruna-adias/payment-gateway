@@ -19,6 +19,7 @@ services:
 
   db:
     image: mysql:8.0
+    platform: linux/amd64
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: payment_gateway
