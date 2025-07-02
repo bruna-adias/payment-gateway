@@ -43,3 +43,6 @@ Para que o Microserviço não fosse tão grande, a parte de criação de um pedi
 - **Documentação**: Markdown
   - Formato leve para documentação
   - Facilidade de leitura e manutenção
+
+## 4. Limitações do GitHub Actions
+Não foi possível utilizar todos os ambientes para os testes E2E, por conta da utilização do docker-compose para gerenciar os ambientes. Como se trata de uma ferramenta baseada em linux, nos ambientes Windows e MacOS ocorreu uma incompatibilidade com o docker-compose, como é possível observar nas actions prévias, que tornou inviável a utilização dos demais ambientes nos testes E2E. Nesse sentido, os testes unitários estão sendo executados nos três ambientes e os testes E2E apenas no Linux.
