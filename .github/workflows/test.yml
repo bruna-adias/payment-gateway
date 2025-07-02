@@ -37,6 +37,7 @@ jobs:
         shell: bash
         run: |
           echo "Waiting for API container to become healthy..."
+          sleep 30
           for i in {1..30}; do
             CONTAINER_ID=$(docker ps -q --filter "name=-app-")
             if [ -z "$CONTAINER_ID" ]; then
