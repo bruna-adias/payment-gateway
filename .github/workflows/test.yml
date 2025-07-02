@@ -33,6 +33,15 @@ jobs:
       - name: Start services
         run: docker compose -f docker-compose.e2e.yaml up --build -d
 
+      - name: Wait for API to be healthy
+        shell: bash
+        run: |
+          echo "Waiting for API..."
+          for i in {1..120}; do
+            sleep 1
+          done
+          exit 0
+
       - name: Run tests with coverage
         run: |
           go test -v -coverprofile='coverage.out' ./...
@@ -76,14 +85,14 @@ jobs:
       - name: Start services
         run: docker compose -f docker-compose.e2e.yaml up --build -d
 
-#      - name: Wait for API to be healthy
-#        shell: bash
-#        run: |
-#          echo "Waiting for API..."
-#          for i in {1..120}; do
-#            sleep 1
-#          done
-#          exit 0
+      - name: Wait for API to be healthy
+        shell: bash
+        run: |
+          echo "Waiting for API..."
+          for i in {1..120}; do
+            sleep 1
+          done
+          exit 0
 
       - name: Run tests with coverage
         run: |
