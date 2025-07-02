@@ -7,17 +7,72 @@ on:
     branches: [ main ]
 
 jobs:
-  test-other-os:
+  test-ubuntu:
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest ]
+        os: [ ubuntu-latest ]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Display Go version
+        run: go version
+
+      - name: Download dependencies
+        run: go mod tidy
+
+      - name: Start services
+        run: docker compose -f docker-compose.e2e.yaml up --build -d
+
+      - name: Wait for API to be healthy
+        shell: bash
+        run: |
+          echo "Waiting for API..."
+          for i in {1..120}; do
+            sleep 1
+          done
+          exit 0
+
+      - name: Run tests with coverage
+        run: |
+          go test -v -coverprofile='coverage.out' ./...
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ runner.os }}
+          path: coverage.out
+
+      - name: Stop services
+        if: always()
+        run: docker compose -f docker-compose.e2e.yaml down
+
+  test-windows:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ windows-latest ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Set up Go
         uses: actions/setup-go@v5
