@@ -15,11 +15,11 @@ COPY . .
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -o payment-gateway
 
-# Add curl
-RUN apk --no-cache add curl
-
 # Final stage
 FROM alpine:latest
+
+# Add curl
+RUN apk --no-cache add curl
 
 WORKDIR /app
 
