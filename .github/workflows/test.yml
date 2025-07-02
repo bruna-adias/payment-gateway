@@ -7,17 +7,34 @@ on:
     branches: [ main ]
 
 jobs:
-  test-ubuntu:
+  test:
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [ ubuntu-latest ]
+        # Executa para todos os 3 sistemas operacionais
+        os: [ ubuntu-latest, windows-latest, macos-13 ]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Switch to Linux containers on Windows
+        if: runner.os == 'Windows'
+        run: '& "C:\Program Files\Docker\Docker\DockerCli.exe" -SwitchDaemon'
+
+      - name: Setup Docker on macOS
+        if: runner.os == 'macOS'
+        uses: douglascamata/setup-docker-macos-action@v1.0.0
+
+      - name: Set up QEMU
+        if: runner.os == 'Windows'
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        if: runner.os == 'Windows'
+        uses: docker/setup-buildx-action@v3
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -36,18 +53,19 @@ jobs:
       - name: Wait for API to be healthy
         shell: bash
         run: |
-          echo "Waiting for API container to become healthy..."
-          sleep 30
+          echo "Waiting for API container to become healthy on ${{ runner.os }}..."
+          # Um pequeno sleep inicial pode ajudar em runners mais lentos
+          sleep 15
           for i in {1..30}; do
             CONTAINER_ID=$(docker ps -q --filter "name=-app-")
             if [ -z "$CONTAINER_ID" ]; then
               echo "API container not found!"
-              docker compose logs app # Mostra os logs para ajudar a depurar
+              docker compose logs app
               exit 1
             fi
           
             HEALTH_STATUS=$(docker inspect -f '{{.State.Health.Status}}' $CONTAINER_ID)
-            echo "Attempt $i: API health status is $HEALTH_STATUS"
+            echo "Attempt $i: API health status is '$HEALTH_STATUS'"
           
             if [ "$HEALTH_STATUS" = "healthy" ]; then
               echo "API is healthy! Proceeding with tests."
@@ -61,8 +79,7 @@ jobs:
           exit 1
 
       - name: Run tests with coverage
-        run: |
-          go test -v -coverprofile='coverage.out' ./...
+        run: go test -v -coverprofile='coverage.out' ./...
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
@@ -73,110 +90,3 @@ jobs:
       - name: Stop services
         if: always()
         run: docker compose -f docker-compose.e2e.yaml down
-
-#  test-windows:
-#    name: Test on ${{ matrix.os }}
-#    runs-on: ${{ matrix.os }}
-#
-#    strategy:
-#      matrix:
-#        os: [ windows-latest ]
-#
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v4
-#
-#      - name: Set up QEMU
-#        uses: docker/setup-qemu-action@v3
-#
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v3
-#
-#      - name: Set up Go
-#        uses: actions/setup-go@v5
-#        with:
-#          go-version: '1.22'
-#
-#      - name: Display Go version
-#        run: go version
-#
-#      - name: Download dependencies
-#        run: go mod tidy
-#
-#      - name: Start services
-#        run: docker compose -f docker-compose.e2e.yaml up --build -d
-#
-#      - name: Wait for API to be healthy
-#        shell: bash
-#        run: |
-#          echo "Waiting for API..."
-#          for i in {1..120}; do
-#            sleep 1
-#          done
-#          exit 0
-#
-#      - name: Run tests with coverage
-#        run: |
-#          go test -v -coverprofile='coverage.out' ./...
-#
-#      - name: Upload coverage artifact
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: coverage-${{ runner.os }}
-#          path: coverage.out
-#
-#      - name: Stop services
-#        if: always()
-#        run: docker compose -f docker-compose.e2e.yaml down
-#
-#  test-macos:
-#    name: Test on ${{ matrix.os }}
-#    runs-on: ${{ matrix.os }}
-#
-#    strategy:
-#      matrix:
-#        os: [ macos-13 ]
-#
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v4
-#
-#      - name: Set up Go
-#        uses: actions/setup-go@v5
-#        with:
-#          go-version: '1.22'
-#
-#      - name: Display Go version
-#        run: go version
-#
-#      - name: Download dependencies
-#        run: go mod tidy
-#
-#      - name: Setup Docker on macOS
-#        uses: douglascamata/setup-docker-macos-action@v1.0.0
-#
-#      - name: Start services
-#        run: docker compose -f docker-compose.e2e.yaml up --build -d
-#
-#      - name: Wait for API to be healthy
-#        shell: bash
-#        run: |
-#          echo "Waiting for API..."
-#          for i in {1..120}; do
-#            sleep 1
-#          done
-#          exit 0
-#
-#      - name: Run tests with coverage
-#        run: |
-#          go test -v -coverprofile='coverage.out' ./...
-#
-#      - name: Upload coverage artifact
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: coverage-${{ runner.os }}
-#          path: coverage.out
-#
-#      - name: Stop services
-#        if: always()
-#        run: docker compose -f docker-compose.e2e.yaml down
